@@ -34,6 +34,20 @@ var app = {
     // function, we must explicity call 'app.receivedEvent(...);'
     onDeviceReady: function() {
         app.receivedEvent('deviceready');
+    	alert(navigator);
+		alert(navigator.camera);
+		navigator.camera.getPicture(onSuccess,onFail, {
+			destinationType:Camera.DestinationType.DATA_URL,
+			quality:50
+		});
+		function onSuccess(data){
+			alert(data);
+		}
+		
+		function onFail(){
+			alert('1');
+		}
+		alert('hwllo');
     },
     // Update DOM on a Received Event
     receivedEvent: function(id) {
