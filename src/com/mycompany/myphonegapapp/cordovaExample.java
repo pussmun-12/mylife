@@ -31,6 +31,8 @@ public class cordovaExample extends DroidGap
         // Set by <content src="index.html" /> in config.xml
         super.loadUrl(Config.getStartUrl());
         //super.loadUrl("file:///android_asset/www/index.html")
+        
+        
     }
 }
 

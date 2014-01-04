@@ -16,6 +16,12 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+ window.echo = function(str, callback) {
+    cordova.exec(callback, function(err) {
+        callback('Nothing to echo.');
+    }, "Echo", "echo", [str]);
+};
+ 
 var app = {
     // Application Constructor
     initialize: function() {
@@ -34,20 +40,11 @@ var app = {
     // function, we must explicity call 'app.receivedEvent(...);'
     onDeviceReady: function() {
         app.receivedEvent('deviceready');
-    	alert(navigator);
-		alert(navigator.camera);
-		navigator.camera.getPicture(onSuccess,onFail, {
-			destinationType:Camera.DestinationType.DATA_URL,
-			quality:50
+        window.echo("echome", function(echoValue) {
+   			alert(echoValue); // should alert true.
 		});
-		function onSuccess(data){
-			alert(data);
-		}
-		
-		function onFail(){
-			alert('1');
-		}
-		alert('hwllo');
+        
+
     },
     // Update DOM on a Received Event
     receivedEvent: function(id) {
