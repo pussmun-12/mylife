@@ -41,7 +41,9 @@ var app = {
     onDeviceReady: function() {
         app.receivedEvent('deviceready');
         window.echo("echome", function(echoValue) {
-   			alert(echoValue); // should alert true.
+   			//alert(echoValue); // should alert true.
+   			var keys = Object.keys(echoValue);
+   			alert(keys);
 		});
         
 
