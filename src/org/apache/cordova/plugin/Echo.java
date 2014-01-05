@@ -61,7 +61,7 @@ public class Echo extends CordovaPlugin {
 					recursiveFileFind(file, toReturn);
 				}
 				else{
-					if(file1.getName().toLowerCase().endsWith(".jpg") ||file1.getName().toLowerCase().endsWith(".jpeg"))
+					if(file1[i].getName().toLowerCase().endsWith(".jpg") ||file1[i].getName().toLowerCase().endsWith(".jpeg"))
 						toReturn.put(filePath, filePath);
 				}
 				i++;
