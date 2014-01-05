@@ -41,7 +41,9 @@ public class Echo extends CordovaPlugin {
 	}
 
 	private JSONObject getImgPaths() throws JSONException {
-		File file[] = Environment.getExternalStorageDirectory().listFiles();
+		//final String path = android.os.Environment.DIRECTORY_DCIM;
+		//File file[] = Environment.getExternalStorageDirectory().listFiles();
+		File file[] = Environment.DIRECTORY_DCIM.listFiles();
 		JSONObject toReturn = new JSONObject();
 		recursiveFileFind(file, toReturn);
 		return toReturn;
