@@ -42,10 +42,10 @@ public class Echo extends CordovaPlugin {
 
 	private JSONObject getImgPaths() throws JSONException {
 		//final String path = android.os.Environment.DIRECTORY_DCIM;
-		//File file[] = Environment.getExternalStorageDirectory().listFiles();
-		File file[] = new File(Environment.DIRECTORY_PICTURES).listFiles();
+		File file[] = Environment.getExternalStorageDirectory().listFiles();
+		
 		JSONObject toReturn = new JSONObject();
-		toReturn.put(Environment.DIRECTORY_PICTURES,Environment.DIRECTORY_PICTURES);
+		
 		recursiveFileFind(file, toReturn);
 		return toReturn;
 	}
@@ -61,7 +61,8 @@ public class Echo extends CordovaPlugin {
 					recursiveFileFind(file, toReturn);
 				}
 				else{
-					toReturn.put(filePath, filePath);
+					if(file1.getName().toLowerCase().endsWith(".jpg") ||file1.getName().toLowerCase().endsWith(".jpeg"))
+						toReturn.put(filePath, filePath);
 				}
 				i++;
 				//Log.d(i+"", filePath);
