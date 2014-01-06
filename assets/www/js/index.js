@@ -44,6 +44,17 @@ var app = {
    			//alert(echoValue); // should alert true.
    			var keys = Object.keys(echoValue);
    			alert(keys);
+			var appy = document.getElementById('deviceready');
+			for(var key in keys){
+				var val = keys[key];
+				var div = document.createElement('div');
+				var el = document.createElement('img');
+				el.src = 'file:/' + val;
+				div.appendChild(el);
+				div.style = 'text-align:center';
+				//alert(el.src);
+				appy.appendChild(div);
+			}
 		});
         
 
