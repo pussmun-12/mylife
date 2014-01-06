@@ -9,6 +9,7 @@ import org.json.JSONObject;
 import java.io.*;
 import java.util.*;
 import 	android.os.Environment;
+import android.media.ExifInterface;
 
 /**
  * This class echoes a string called from JavaScript.
@@ -61,12 +62,39 @@ public class Echo extends CordovaPlugin {
 					recursiveFileFind(file, toReturn);
 				}
 				else{
-					if(file1[i].getName().toLowerCase().endsWith(".jpg") ||file1[i].getName().toLowerCase().endsWith(".jpeg"))
-						toReturn.put(filePath, filePath);
+					if(file1[i].getName().toLowerCase().endsWith(".jpg") ||file1[i].getName().toLowerCase().endsWith(".jpeg")){
+						try {
+							int rotate = getImgOrientation(file1[i]);
+							toReturn.put(filePath, rotate);
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						
+					}
 				}
 				i++;
 				//Log.d(i+"", filePath);
 			}
 		}
+	}
+	
+	public int getImgOrientation(File imageFile) throws IOException{
+		int rotate = 0;
+        ExifInterface exif = new ExifInterface(imageFile.getAbsolutePath());
+        int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
+
+        switch (orientation) {
+        case ExifInterface.ORIENTATION_ROTATE_270:
+            rotate = 270;
+            break;
+        case ExifInterface.ORIENTATION_ROTATE_180:
+            rotate = 180;
+            break;
+        case ExifInterface.ORIENTATION_ROTATE_90:
+            rotate = 90;
+            break;
+        }
+        return rotate;
 	}
 }
