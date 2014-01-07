@@ -63,13 +63,16 @@ public class Echo extends CordovaPlugin {
 				}
 				else{
 					if(file1[i].getName().toLowerCase().endsWith(".jpg") ||file1[i].getName().toLowerCase().endsWith(".jpeg")){
+						int rotate = 0;
 						try {
-							int rotate = getImgOrientation(file1[i]);
-							toReturn.put(filePath, rotate);
+							rotate = getImgOrientation(file1[i]);
+							
 						} catch (IOException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
+						Bitmap bitMapObj= BitmapFactory.decodeFile(filePath);
+						toReturn.put(Uri.parse(file1[1].toString()), rotate);
 						
 					}
 				}
