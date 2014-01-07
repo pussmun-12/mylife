@@ -66,13 +66,14 @@ public class Echo extends CordovaPlugin {
 						int rotate = 0;
 						try {
 							rotate = getImgOrientation(file1[i]);
+							toReturn.put(filePath, rotate);
 							
 						} catch (IOException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
-						Bitmap bitMapObj= BitmapFactory.decodeFile(filePath);
-						toReturn.put(Uri.parse(file1[1].toString()), rotate);
+						//Bitmap bitMapObj= BitmapFactory.decodeFile(filePath);
+						
 						
 					}
 				}
