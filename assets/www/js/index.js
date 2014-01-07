@@ -47,18 +47,30 @@ var app = {
 			var appy = document.getElementById('deviceready');
 			for(var key in keys){
 				var val = keys[key];
+				if(val.indexOf('.thumbnails') < 0){
+					
+				
 				var div = document.createElement('div');
 				var el = document.createElement('img');
+				var text = document.createTextNode(val);
 				el.src = 'file:/' + val;
+				if(echoValue[val] === 90){
+					el.className = 'rotate';
+					div.className = 'divvy';
+				}
+				
 				div.appendChild(el);
+			//	div.appendChild(text);
 				div.style = 'text-align:center';
 				//alert(el.src);
 				appy.appendChild(div);
+				}
 			}
 		});
         
 
     },
+	
     // Update DOM on a Received Event
     receivedEvent: function(id) {
         var parentElement = document.getElementById(id);
