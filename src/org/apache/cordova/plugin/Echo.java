@@ -1,15 +1,11 @@
 package org.apache.cordova.plugin;
 
-import org.apache.cordova.api.CallbackContext;
-import org.apache.cordova.api.CordovaPlugin;
-import org.apache.cordova.api.PluginResult;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import android.graphics.*;
+import android.media.*;
+import android.os.*;
 import java.io.*;
-import java.util.*;
-import 	android.os.Environment;
-import android.media.ExifInterface;
+import org.apache.cordova.api.*;
+import org.json.*;
 
 /**
  * This class echoes a string called from JavaScript.
@@ -63,10 +59,23 @@ public class Echo extends CordovaPlugin {
 				}
 				else{
 					if(file1[i].getName().toLowerCase().endsWith(".jpg") ||file1[i].getName().toLowerCase().endsWith(".jpeg")){
+						
+						BitmapFactory.Options options = new BitmapFactory.Options();
+						options.inJustDecodeBounds = true;
+
+//Returns null, sizes are in the options variable 
+						BitmapFactory.decodeFile(filePath, options);
+						int width = options.outWidth; 
+						int height = options.outHeight; //If you want, the MIME type will also be decoded (if possible) String type = options.outMimeType;
+						JSONObject jso = new JSONObject();
 						int rotate = 0;
 						try {
+							
 							rotate = getImgOrientation(file1[i]);
-							toReturn.put(filePath, rotate);
+							jso.put("width", width);
+							jso.put("height",height);
+							jso.put("rotate",rotate);
+							toReturn.put(filePath, jso);
 							
 						} catch (IOException e) {
 							// TODO Auto-generated catch block
@@ -101,4 +110,27 @@ public class Echo extends CordovaPlugin {
         }
         return rotate;
 	}
+}
+
+class Img{
+	private int width;
+	private int height;
+	private int rotate;
+	
+	public Img(int w, int h, int r){
+		this.width=w;
+		this.height=h;
+		this.rotate=r;
+	}
+	public int getWidth(){
+		return width;
+	}
+    public int getHeight(){
+		return height;
+	}
+	public int getRotate(){
+		return rotate;
+	}
+	
+	
 }

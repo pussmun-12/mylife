@@ -43,25 +43,32 @@ var app = {
         window.echo("echome", function(echoValue) {
    			//alert(echoValue); // should alert true.
    			var keys = Object.keys(echoValue);
-   			alert(keys);
+   		//	alert(keys);
+	//		var keys = ['content://media/external/images/media/2760'];
 			var appy = document.getElementById('deviceready');
 			for(var key in keys){
 				var val = keys[key];
-				if(val.indexOf('.thumbnails') < 0){
+				if(val.indexOf('/DCIM/100ANDRO') >= 0){
 					
 				
 				var div = document.createElement('div');
 				var el = document.createElement('img');
 				var text = document.createTextNode(val);
 				el.src = 'file:/' + val;
-				if(echoValue[val] === 90){
+				var imgobj = echoValue[val];
+				alert(imgobj.height + ", " + imgobj.width);
+				var pad = 300/imgobj.width;//float
+				var padding = pad * imgobj.height;
+			if(imgobj.rotate === 90){
 					el.className = 'rotate';
 					div.className = 'divvy';
+					el.style.marginLeft = ((window.outerWidth - Math.round(padding)) / 2)+ 'px';
 				}
 				
 				div.appendChild(el);
 			//	div.appendChild(text);
-				div.style = 'text-align:center';
+			    div.style.width = '100%';
+			    
 				//alert(el.src);
 				appy.appendChild(div);
 				}
