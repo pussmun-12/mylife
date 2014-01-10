@@ -45,7 +45,7 @@ var app = {
    			var keys = Object.keys(echoValue);
    		//	alert(keys);
 	//		var keys = ['content://media/external/images/media/2760'];
-			var appy = document.getElementById('deviceready');
+			var appy = document.getElementById('carouselly');
 			for(var key in keys){
 				var val = keys[key];
 				if(val.indexOf('/DCIM/100ANDRO') >= 0){
