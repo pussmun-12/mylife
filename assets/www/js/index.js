@@ -92,7 +92,7 @@ var app = {
 };
 
 
-function createCarousel(){
+
 /*
  * responsive-carousel
  * https://github.com/filamentgroup/responsive-carousel
@@ -461,7 +461,6 @@ function createCarousel(){
 		} );
 		
 }(jQuery));
-}
 
 /*
  * responsive-carousel auto-init extension
@@ -469,7 +468,7 @@ function createCarousel(){
  *
  * Copyright (c) 2012 Filament Group, Inc.
  * Licensed under the MIT, GPL licenses.
- 
+ */
 
 (function( $ ) {
 	// DOM-ready auto-init
@@ -477,4 +476,3 @@ function createCarousel(){
 		$( ".carousel" ).carousel();
 	} );
 }( jQuery ));
-*/
