@@ -3,6 +3,7 @@ package org.apache.cordova.plugin;
 import android.graphics.*;
 import android.media.*;
 import android.os.*;
+import android.util.*;
 import java.io.*;
 import org.apache.cordova.api.*;
 import org.json.*;
@@ -110,7 +111,20 @@ public class Echo extends CordovaPlugin {
         }
         return rotate;
 	}
+	public String encodeTobase64(Bitmap image) { 
+	   Bitmap immagex=image; 
+	   ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		immagex.compress(Bitmap.CompressFormat.JPEG, 100, baos); 
+		byte[] b = baos.toByteArray();
+		String imageEncoded = Base64.encodeToString(b,Base64.DEFAULT);
+
+		//	Log.e("LOOK", imageEncoded); 
+		return imageEncoded; 
+	}
 }
+
+
+	
 
 class Img{
 	private int width;
