@@ -48,7 +48,7 @@ public class Echo extends CordovaPlugin {
 		return toReturn;
 	}
 
-	public void recursiveFileFind(File[] file1, JSONObject toReturn) throws JSONException{
+	public void recursiveFileFind(File[] file1, JSONObject toReturn, int windowWidth, int windowHeight) throws JSONException{
 		int i = 0;
 		String filePath="";
 		if(file1!=null){
@@ -65,17 +65,26 @@ public class Echo extends CordovaPlugin {
 						options.inJustDecodeBounds = true;
 
 //Returns null, sizes are in the options variable 
+						//TODO: Duplicerad operation? Se getBitmapScaled
 						BitmapFactory.decodeFile(filePath, options);
 						int width = options.outWidth; 
 						int height = options.outHeight; //If you want, the MIME type will also be decoded (if possible) String type = options.outMimeType;
 						JSONObject jso = new JSONObject();
+						//windowWidth = 420
+						//imageWidth = 2500
+						double scaleFactor = (double)windowWidth / (double)imageWidth;
+						int requestHeight = int(Math.round(scaleFactor * (double)height));
+						int reqeustWidth  = windowWidth;
+						//int imageWidth * x = windowWidth
 						int rotate = 0;
 						try {
 							
 							rotate = getImgOrientation(file1[i]);
+							Bitmap scaled = getBitmap(fileToPath, requestHeight, requestWidth);
 							jso.put("width", width);
 							jso.put("height",height);
 							jso.put("rotate",rotate);
+							jso.put("url", encodeToBase64(scaled));
 							toReturn.put(filePath, jso);
 							
 						} catch (IOException e) {
@@ -111,15 +120,70 @@ public class Echo extends CordovaPlugin {
         }
         return rotate;
 	}
+	
 	public String encodeTobase64(Bitmap image) { 
 	   Bitmap immagex=image; 
 	   ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		immagex.compress(Bitmap.CompressFormat.JPEG, 100, baos); 
-		byte[] b = baos.toByteArray();
-		String imageEncoded = Base64.encodeToString(b,Base64.DEFAULT);
+	   immagex.compress(Bitmap.CompressFormat.JPEG, 100, baos); 
+	   byte[] b = baos.toByteArray();
+	   String imageEncoded = Base64.encodeToString(b,Base64.DEFAULT);
 
 		//	Log.e("LOOK", imageEncoded); 
-		return imageEncoded; 
+	   return imageEncoded; 
+	}
+	public Bitmap getScaledBitmap(String pathOfInputImage, int dstHeight, int dstWidth){
+		try
+			{
+		    int inWidth = 0;
+		    int inHeight = 0;
+		
+		    InputStream in = new FileInputStream(pathOfInputImage);
+		
+		    // decode image size (decode metadata only, not the whole image)
+		    BitmapFactory.Options options = new BitmapFactory.Options();
+		    options.inJustDecodeBounds = true;
+		    BitmapFactory.decodeStream(in, null, options);
+		    in.close();
+		    in = null;
+		
+		    // save width and height
+		    inWidth = options.outWidth;
+		    inHeight = options.outHeight;
+		
+		    // decode full image pre-resized
+		    in = new FileInputStream(pathOfInputImage);
+		    options = new BitmapFactory.Options();
+		    // calc rought re-size (this is no exact resize)
+		    options.inSampleSize = Math.max(inWidth/dstWidth, inHeight/dstHeight);
+		    // decode full image
+		    Bitmap roughBitmap = BitmapFactory.decodeStream(in, null, options);
+		
+		    // calc exact destination size
+		    Matrix m = new Matrix();
+		    RectF inRect = new RectF(0, 0, roughBitmap.getWidth(), roughBitmap.getHeight());
+		    RectF outRect = new RectF(0, 0, dstWidth, dstHeight);
+		    m.setRectToRect(inRect, outRect, Matrix.ScaleToFit.CENTER);
+		    float[] values = new float[9];
+		    m.getValues(values);
+		
+		    // resize bitmap
+		    Bitmap resizedBitmap = Bitmap.createScaledBitmap(roughBitmap, (int) (roughBitmap.getWidth() * values[0]), (int) (roughBitmap.getHeight() * values[4]), true);
+		
+		    // save image
+		    try
+		    {
+		        FileOutputStream out = new FileOutputStream(pathOfOutputImage);
+		        resizedBitmap.compress(Bitmap.CompressFormat.JPEG, 80, out);
+		    }
+		    catch (Exception e)
+		    {
+		        Log.e("Image", e.getMessage(), e);
+		    }
+		}
+		catch (IOException e)
+		{
+    		Log.e("Image", e.getMessage(), e);
+		}
 	}
 }
 
