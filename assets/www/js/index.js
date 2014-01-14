@@ -56,7 +56,7 @@ var app = {
 				var el = document.createElement('img');
 				var text = document.createTextNode(val);
 				
-				el.src = 'file:/' + val;
+			//	el.src = 'file:/' + val;
 			//    el.src = 'http://phaseoneimageprofessor.files.wordpress.com/2013/07/iqpw29_main_image_.jpg';
 			  //   el.src ='http://upload.wikimedia.org/wikipedia/commons/0/0f/2010-02-19_3000x2000_chicago_skyline.jpg';
 				if(first && [val] != 90){
@@ -68,7 +68,7 @@ var app = {
 					first = false;
 				}
 				var imgobj = echoValue[val];
-			
+			    el.src = 'data:image/jpeg;base64,' + imgobj.url;
 				var pad = 300/imgobj.width;//float
 				var padding = pad * imgobj.height;
 			if(imgobj.rotate === 90){
