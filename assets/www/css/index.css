@@ -121,6 +121,7 @@ h1 {
  * Licensed under the MIT, GPL licenses.
  */
 .carousel {
+    height:300px;
 	width: 100%;
 	position: relative;
 }

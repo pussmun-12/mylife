@@ -16,19 +16,21 @@ public class Echo extends CordovaPlugin {
 	public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
 		if (action.equals("echo")) {
 			String message = args.getString(0); 
-			this.echo(message, callbackContext);
+			int width = args.getInt(1);
+			int height = args.getInt(2);
+			this.echo(message,width,height, callbackContext);
 			return true;
 		}
 		return false;
 	}
 
-	private void echo(String message, CallbackContext callbackContext) {
+	private void echo(String message, int width, int height, CallbackContext callbackContext) {
 		if (message != null && message.length() > 0) {
 
 
 
 			try{
-				callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, getImgPaths()));
+				callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, getImgPaths(width,height)));
 			}
 			catch(JSONException e){
 				callbackContext.error("ERROR!");
@@ -38,13 +40,14 @@ public class Echo extends CordovaPlugin {
 		}
 	}
 
-	private JSONObject getImgPaths() throws JSONException {
-	//	final String path = android.os.Environment.DIRECTORY_DCIM;
-		File file[] = Environment.getExternalStorageDirectory().listFiles();
-	//	File file[] = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).listFiles();
+	private JSONObject getImgPaths(int width, int height) throws JSONException {
+		final String path = android.os.Environment.DIRECTORY_DCIM;
+		File filey = new File("/mnt/sdcard/DCIM/100ANDRO");
+	//	File file[] = Environment.getExternalStorageDirectory().listFiles();
+		File file[] = filey.listFiles();
 		JSONObject toReturn = new JSONObject();
 		
-		recursiveFileFind(file, toReturn);
+		recursiveFileFind(file, toReturn,width,height);
 		return toReturn;
 	}
 
@@ -56,7 +59,7 @@ public class Echo extends CordovaPlugin {
 				filePath = file1[i].getAbsolutePath();
 				if(file1[i].isDirectory()){
 					File file[] = file1[i].listFiles();
-					recursiveFileFind(file, toReturn);
+					recursiveFileFind(file, toReturn,windowWidth,windowHeight);
 				}
 				else{
 					if(file1[i].getName().toLowerCase().endsWith(".jpg") ||file1[i].getName().toLowerCase().endsWith(".jpeg")){
@@ -72,20 +75,21 @@ public class Echo extends CordovaPlugin {
 						JSONObject jso = new JSONObject();
 						//windowWidth = 420
 						//imageWidth = 2500
-						double scaleFactor = (double)windowWidth / (double)imageWidth;
-						int requestHeight = int(Math.round(scaleFactor * (double)height));
-						int reqeustWidth  = windowWidth;
+						double scaleFactor = (double)windowWidth / (double)width;
+						int requestHeight = (int)(Math.round(scaleFactor * (double)height));
+						int requestWidth  = windowWidth;
 						//int imageWidth * x = windowWidth
 						int rotate = 0;
 						try {
 							
 							rotate = getImgOrientation(file1[i]);
-							Bitmap scaled = getBitmap(fileToPath, requestHeight, requestWidth);
+							Bitmap scaled = getScaledBitmap(filePath, requestHeight, requestWidth);
 							jso.put("width", width);
 							jso.put("height",height);
 							jso.put("rotate",rotate);
-							jso.put("url", encodeToBase64(scaled));
+							jso.put("url", encodeTobase64(scaled));
 							toReturn.put(filePath, jso);
+							
 							
 						} catch (IOException e) {
 							// TODO Auto-generated catch block
@@ -132,6 +136,8 @@ public class Echo extends CordovaPlugin {
 	   return imageEncoded; 
 	}
 	public Bitmap getScaledBitmap(String pathOfInputImage, int dstHeight, int dstWidth){
+		Bitmap resizedBitmap = null;
+		
 		try
 			{
 		    int inWidth = 0;
@@ -167,23 +173,16 @@ public class Echo extends CordovaPlugin {
 		    m.getValues(values);
 		
 		    // resize bitmap
-		    Bitmap resizedBitmap = Bitmap.createScaledBitmap(roughBitmap, (int) (roughBitmap.getWidth() * values[0]), (int) (roughBitmap.getHeight() * values[4]), true);
+		    resizedBitmap = Bitmap.createScaledBitmap(roughBitmap, (int) (roughBitmap.getWidth() * values[0]), (int) (roughBitmap.getHeight() * values[4]), true);
 		
 		    // save image
-		    try
-		    {
-		        FileOutputStream out = new FileOutputStream(pathOfOutputImage);
-		        resizedBitmap.compress(Bitmap.CompressFormat.JPEG, 80, out);
-		    }
-		    catch (Exception e)
-		    {
-		        Log.e("Image", e.getMessage(), e);
-		    }
+		    
 		}
 		catch (IOException e)
 		{
     		Log.e("Image", e.getMessage(), e);
 		}
+		return resizedBitmap;
 	}
 }
 

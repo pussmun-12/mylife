@@ -19,7 +19,7 @@
  window.echo = function(str, callback) {
     cordova.exec(callback, function(err) {
         callback('Nothing to echo.');
-    }, "Echo", "echo", [str]);
+    }, "Echo", "echo", [str,window.outerWidth,300]);
 };
  
 var app = {
@@ -55,6 +55,7 @@ var app = {
 				var div = document.createElement('div');
 				var el = document.createElement('img');
 				var text = document.createTextNode(val);
+				
 				el.src = 'file:/' + val;
 			//    el.src = 'http://phaseoneimageprofessor.files.wordpress.com/2013/07/iqpw29_main_image_.jpg';
 			  //   el.src ='http://upload.wikimedia.org/wikipedia/commons/0/0f/2010-02-19_3000x2000_chicago_skyline.jpg';
@@ -67,7 +68,7 @@ var app = {
 					first = false;
 				}
 				var imgobj = echoValue[val];
-			//	alert(imgobj.height + ", " + imgobj.width);
+			
 				var pad = 300/imgobj.width;//float
 				var padding = pad * imgobj.height;
 			if(imgobj.rotate === 90){
@@ -75,7 +76,7 @@ var app = {
 					div.className = 'divvy';
 					el.style.marginLeft = ((window.outerWidth - Math.round(padding)) / 2)+ 'px';
 				}
-			//	else{
+				
 				
 				div.appendChild(el);
 			//	div.appendChild(text);
@@ -83,7 +84,7 @@ var app = {
 			    
 				//alert(el.src);
 				appy.appendChild(div);
-			//	}
+				
 				}
 			}
 		//	$( ".carousel" ).carousel();
