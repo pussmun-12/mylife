@@ -65,6 +65,13 @@ img{
 /**  padding-left:100px;**/
 }
 
+.bgimage{
+  background-attachment:scroll;
+  background-position:center center;
+  background-size:cover;
+  width:100%;
+}
+
 h1 {
     font-size:24px;
     font-weight:normal;
@@ -124,6 +131,7 @@ h1 {
     height:300px;
 	width: 100%;
 	position: relative;
+	background-color:black;
 }
 .carousel .carousel-item {
 	display: none;
