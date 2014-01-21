@@ -100,6 +100,15 @@ var app = {
 				}
 			}
 			$( ".carousel" ).carousel();
+			
+			var options = {
+			 date: new Date(),
+  			 mode: 'date'
+			};
+			// calling show() function with options and a result handler
+			datePicker.show(options, function(date){
+  				console.log("date result " + date);  
+			});
 		});
         
 
