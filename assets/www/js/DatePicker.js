@@ -7,7 +7,7 @@
  *
  * Rewrite by Dileep
  */
-var exec = require('cordova/exec');
+
 
 /**
  * Constructor
@@ -37,7 +37,7 @@ DatePicker.prototype.show = function(options, cb) {
     }
     this._callback = cb;
 
-    return exec(cb, failureCallback, 'DatePickerPlugin', defaults.mode, new Array(defaults));
+    return cordova.exec(cb, failureCallback, 'DatePickerPlugin', defaults.mode, new Array(defaults));
 };
 
 DatePicker.prototype._dateSelected = function(date) {
