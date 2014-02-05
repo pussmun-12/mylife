@@ -40,7 +40,7 @@ var app = {
     // function, we must explicity call 'app.receivedEvent(...);'
     onDeviceReady: function() {
         app.receivedEvent('deviceready');
-        window.echo("echome", function(echoValue) {
+      /*  window.echo("echome", function(echoValue) {
    			//alert(echoValue); // should alert true.
    			var keys = Object.keys(echoValue);
 			var first = true;
@@ -79,17 +79,7 @@ var app = {
 			div.appendChild(el);
 					}
 				
-		/*	else{
-				var url ="url(" + data + ")";
-				
-				div.className='bgimg';
-				div.style.backgroundImage = url;
-			//	div.style.backgroundSize='100% 100%';
-				div.style.height = '300px';
-			//	div.style.width = '100%';
-			//	$(div).css('background-position', 'cover');
-			//	alert($(div).css('background'));
-			}	*/
+		
 				
 			//	div.appendChild(text);
 			   // div.style.width = '100%';
@@ -100,7 +90,7 @@ var app = {
 				}
 			}
 			$( ".carousel" ).carousel();
-		});
+		});*/
         
 
     },
