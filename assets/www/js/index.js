@@ -90,7 +90,20 @@ var app = {
 				}
 			}
 			$( ".carousel" ).carousel();
+<<<<<<< HEAD
 		});*/
+=======
+			
+			var options = {
+			 date: new Date(),
+  			 mode: 'date'
+			};
+			// calling show() function with options and a result handler
+			datePicker.show(options, function(date){
+  				console.log("date result " + date);  
+			});
+		});
+>>>>>>> fe144d8bb325da1603d87398f79205c3661a6b94
         
 
     },
