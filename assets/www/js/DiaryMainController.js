@@ -7,69 +7,6 @@
  */
 function DiaryMainController($scope, $log, $timeout, $rootScope, $location, $navigate, dateService){
 
-
-    /**   $scope.myMarkers = [];
-
-     $scope.mapOptions = {
-     center: new google.maps.LatLng(35.784, -78.670),
-     zoom: 15,
-     mapTypeId: google.maps.MapTypeId.ROADMAP
-     };
-
-     $scope.addMarker = function ($event, $params) {
-     console.log('addMarker');
-     console.log($params[0].latLng);
-     if($scope.myMarkers.length === 0){
-     console.log('length is zero');
-     $scope.myMarkers.push(new google.maps.Marker({
-     map: $scope.myMap,
-     position: $params[0].latLng
-     }));
-     }
-     else{
-     $scope.removeMarkers();
-     $scope.myMarkers.push(new google.maps.Marker({
-     map: $scope.myMap,
-     position: $params[0].latLng
-     }));
-
-     }
-
-     };
-
-     $scope.setZoomMessage = function (zoom) {
-     $scope.zoomMessage = 'You just zoomed to ' + zoom + '!';
-     console.log(zoom, 'zoomed');
-     };
-
-     $scope.openMarkerInfo = function (marker) {
-     $scope.currentMarker = marker;
-     $scope.currentMarkerLat = marker.getPosition().lat();
-     $scope.currentMarkerLng = marker.getPosition().lng();
-     $scope.myInfoWindow.open($scope.myMap, marker);
-     };
-
-     $scope.removeMarkers = function(){
-     angular.forEach($scope.myMarkers, function(marker) {
-     marker.setMap(null);
-     });
-     $scope.myMarkers.splice(0, $scope.myMarkers.length);
-
-     }
-     $scope.$watch('myMap', function(){
-     //$scope.setHome();
-     });
-
-     $scope.setHome = function() {
-     $scope.homeMarker = new google.maps.Marker({
-     map: $scope.myMap,
-     position: $scope.mapOptions.center
-     });
-     }
-
-     $scope.setMarkerPosition = function (marker, lat, lng) {
-     marker.setPosition(new google.maps.LatLng(lat, lng));
-     }; **/
     $scope.windowWidth = window.outerWidth;
     $scope.factBoxes = [];
     $scope.showDiaryVar = false;
@@ -82,7 +19,7 @@ function DiaryMainController($scope, $log, $timeout, $rootScope, $location, $nav
 
     $scope.go = function(path){
         console.log('go');
-         $('#myCarousel').carousel('stop');
+        $('#myCarousel').carousel('stop');
         if($scope.diaryStyle === "1")
             $scope.diaryStyle ="2";
         else
@@ -545,214 +482,153 @@ function DiaryMainController($scope, $log, $timeout, $rootScope, $location, $nav
 
     }
 
-    $scope.initDiaryJS = function(){
-        console.log('initDiaryJS!');
+    $scope.toggleMenu = function(){
+        if($scope.showMenu){
+            $scope.showMenu = false;
+        }
+        else{
+            $scope.showMenu = true;
+        }
+    }
 
+    $scope.initDiaryJS = function(){
         $('#welcomePage').remove();
         $('#myCarousel').carousel();
+        $scope.showMenu = false;
+        $scope.showFactBoxes = false;
+        $scope.factBoxEditMode = false;
+        $scope.factboxImage = null;
+        $scope.factBoxes = [];
+        $scope.factBoxesExist = true;
+        $scope.documentHeight = $(document).height();
+        $scope.showDiaryVar = false;
+        $scope.showLoadingSpinner = true;
+        $scope.showMainTextButton = false;
+        $scope.mainText = null;
+        $scope.obj.activeIndex = -1;
+        $scope.obj.activeFactBoxIndex = -1;
+        $scope.mainTextExists = false;
+        $scope.mainTextHeaderExists = false;
+        $scope.currentDate = dateService.getCurrentDate();
+        $scope.currentDateDMYY = dateService.getCurrentDateDMYY();
+        if(true){
+            $scope.doInitJs = false;
+            $scope.imagesOnLoad = false; //TODO: Fel ställe?
+            $scope.showCategories = false; //TODO: Fel ställe?
+
+            var promise = (function(){
+                if(false){
+                    return $.Deferred($scope.dbService.getDatesHavingImagesFromServer()).promise();
+                }
+                else{
+                    console.log('get empty image date array..');
+                    return [];
+                }
+            })();
+            var promise2 = $.when(promise).then(function(datesHavingImages){
+                $scope.datesHavingImages = datesHavingImages;
+                console.log('datesHavingImages:');
+                console.log(datesHavingImages);
+
+                //fetch data for this day from server
+                return $.Deferred($scope.serverService.getDataForDate($scope.currentDate)).promise();
+            });
+
+            var promise3 = $.when(promise2).then(function(data){
+                $scope.dateData = data;
+
+                //return $.Deferred($scope.dbService.getImagesForDate2($scope.currentDate)).promise();
+                return [];
+            });
+
+            var promise4 = $.when(promise3).then(function(images){
+                $scope.currentImages = images;
+                console.log('Images hämtade');
+                //$scope.doInitJs = true;
+                if(!$scope.serverService.getDatesHavingText()){
+                    return $.Deferred($scope.serverService.getDatesHavingTextFromServer()).promise();
+                }
+                else{
+                    return $scope.serverService.getDatesHavingText();
+                }
+            });
+            //TODO: Chrome kraschade när jag bytte dag mitt i transition mellan biler i karusellen. Ev. pausa karusellen vid klick i kalandern. Eller vänta på pågående transition. Hmm?
+            //TODO: Fixa en onload event på första imagen i karusellen istället för den timeout på 3(?) sek. som jag nu har
+            //TODO: Ta bort prickar i kalenderna (content? som han har lagt dit?) se feb 2012
+            //TODO: Fixa bugg i kalenderna som ritar ut tisdag först i veckan när man markerar en dag(?)
+            //TODO: Bugg: maintext för 2011 31 finns men i objektet för den dagen hittas ingen maintext, bara factbox
+            var evenNextPromise = $.when(promise4).then(function(datesHavingText){
+                console.log('dates having text and images resolved');
+                console.log(datesHavingText);
+                $scope.datesHavingText = datesHavingText;
+                //TODO: borde inte göras här, behöver man bara göra en gång per inloggning väl?
+                return $.Deferred($scope.serverService.getCategoryList()).promise();
+            }).then(function(categoryList){
+                    console.log('Datahämtning färdig');
+                    //console.log(data);
+
+                    console.log($scope.datesHavingText);
+
+                    console.log(categoryList);
+                    $scope.imageCategories = categoryList['imageCategories'];
+                    if(!$scope.imageCategories){
+                        $scope.imageCategories = [];
+                    }
+
+                    var keys = Object.keys($scope.dateData);
+                    var factBoxIndex = 0;
+                    for (var i = 0; i < keys.length; i++) {
+                        console.log(keys[i]);
+                        var val = $scope.dateData[keys[i]];
+                        if(val.clazz && val.clazz === 'factbox'){
+                            $scope.factBoxes[factBoxIndex] = val;
+                            factBoxIndex++;
+                        }
+                        // use val
+                    }
 
 
-       // initCarousel();
+                    var url = 'http://content.guardianapis.com/search?section=news&from-date=' + $scope.currentDate + '&to-date=' + $scope.currentDate + '&order-by=relevance&format=json&api-key=t7dche4w86sjb3c6g6xh8dms';
+                    $.ajax({
+                        url: url,
+                        dataType: 'jsonp',
+                        success: function (data) {
+                            // $('body').html(data);
+                            // console.log(data);
+                            var results = data.response.results;
+                            for(var i = 0; i < results.length;i++){
+                                //console.log(results[i].webTitle);
+                                if(i < 5){
+                                    var item = $('<p style="text-indent:-13px;margin-bottom:20px;"><i class="icon-chevron-sign-right" style="margin-right: -5px;color:#FF9999";"></i><span style="font-size:14px;line-height: 20px;">' + results[i].webTitle + '</span></a>');
+                                    $('#newsContainer').append(item);
 
-        //$scope.calendarUtil.initCalendar($scope, $scope.currentDate);
-        /*   console.log('Heighten:::::::');
-         console.log($('body').height());
-         console.log($('#spinnerContainer').height());
-         $scope.showFactBoxes = false;
-         $scope.factBoxEditMode = false;
-         $scope.factboxImage = null;
-         $scope.factBoxes = [];
-         $scope.factBoxesExist = true;
-         $scope.documentHeight = $(document).height();
-         $scope.showDiaryVar = false;
-         $scope.showLoadingSpinner = true;
-         $scope.showMainTextButton = false;
-         $scope.mainText = null;
-         $scope.obj.activeIndex = -1;
-         $scope.obj.activeFactBoxIndex = -1;
-         $scope.mainTextExists = false;
-         $scope.mainTextHeaderExists = false;
-         if(true){
-         $scope.doInitJs = false;
-         $scope.imagesOnLoad = false; //TODO: Fel ställe?
-         $scope.showCategories = false; //TODO: Fel ställe?
-         $('#navigation').css('display', 'none');
-         console.log('init diary JS');
+                                }
+                            }
+                        }
 
-         var promise = (function(){
-         if(!$scope.dbService.getDatesHavingImages()){
-         return $.Deferred($scope.dbService.getDatesHavingImagesFromServer()).promise();
-         }
-         else{
-         console.log('getDatesHavingImages from dbService..');
-         return $scope.dbService.getDatesHavingImages();
-         }
-         })();
-         var promise2 = $.when(promise).then(function(datesHavingImages){
-         $scope.datesHavingImages = datesHavingImages;
-         console.log('datesHavingImages:');
-         console.log(datesHavingImages);
-         if(!$scope.currentDate){
-         //currentDate = $scope.currentDate;
-         $scope.currentDate = $scope.datesHavingImages[($scope.datesHavingImages.length -1)] ;
-         }
-         //fetch data for this day from server
-         return $.Deferred($scope.serverService.getDataForDate($scope.currentDate)).promise();
-         });
 
-         var promise3 = $.when(promise2).then(function(data){
-         $scope.dateData = data;
+                    });
+                    var mainTextForToday =  'maintext_' + $scope.currentDate;
+                    if($scope.dateData[mainTextForToday]){
+                        console.log('mainTextForToday finns!');
+                        $scope.mainText = {};
+                        $scope.mainText.body = $scope.dateData[mainTextForToday].text;
+                        $scope.mainText.clazz = $scope.dateData[mainTextForToday].clazz;
+                        $scope.mainTextExists = true;
+                        if($scope.dateData[mainTextForToday].header){
+                            $scope.mainText.header = $scope.dateData[mainTextForToday].header;
+                            $scope.mainTextHeaderExists = true;
+                        }
+                        console.log('HÄR: ' + $scope.mainText.body);
 
-         return $.Deferred($scope.dbService.getImagesForDate2($scope.currentDate)).promise();
-         });
-
-         var promise4 = $.when(promise3).then(function(images){
-         $scope.currentImages = images;
-         console.log('Images hämtade');
-         //$scope.doInitJs = true;
-         if(!$scope.serverService.getDatesHavingText()){
-         return $.Deferred($scope.serverService.getDatesHavingTextFromServer()).promise();
-         }
-         else{
-         return $scope.serverService.getDatesHavingText();
-         }
-         });
-         //TODO: Chrome kraschade när jag bytte dag mitt i transition mellan biler i karusellen. Ev. pausa karusellen vid klick i kalandern. Eller vänta på pågående transition. Hmm?
-         //TODO: Fixa en onload event på första imagen i karusellen istället för den timeout på 3(?) sek. som jag nu har
-         //TODO: Ta bort prickar i kalenderna (content? som han har lagt dit?) se feb 2012
-         //TODO: Fixa bugg i kalenderna som ritar ut tisdag först i veckan när man markerar en dag(?)
-         //TODO: Bugg: maintext för 2011 31 finns men i objektet för den dagen hittas ingen maintext, bara factbox
-         var evenNextPromise = $.when(promise4).then(function(datesHavingText){
-         console.log('dates having text and images resolved');
-         console.log(datesHavingText);
-         $scope.datesHavingText = datesHavingText;
-         $scope.calendarUtil.initCalendar($scope, $scope.currentDate);
-         //TODO: borde inte göras här, behöver man bara göra en gång per inloggning väl?
-         return $.Deferred($scope.serverService.getCategoryList()).promise();
-         }).then(function(categoryList){
-         console.log('Datahämtning färdig');
-         //console.log(data);
-
-         console.log($scope.datesHavingText);
-
-         console.log(categoryList);
-         $scope.imageCategories = categoryList['imageCategories'];
-         if(!$scope.imageCategories){
-         $scope.imageCategories = [];
-         }
-
-         var keys = Object.keys($scope.dateData);
-         var factBoxIndex = 0;
-         for (var i = 0; i < keys.length; i++) {
-         console.log(keys[i]);
-         var val = $scope.dateData[keys[i]];
-         if(val.clazz && val.clazz === 'factbox'){
-         $scope.factBoxes[factBoxIndex] = val;
-         factBoxIndex++;
-         }
-         // use val
-         }
-
-         var item = '';
-         var style;
-         for(var i = 0; i < $scope.currentImages.length; i++){
-         var image = $scope.currentImages[i];
-         var imageKey = image.name + '_' + image.modified.toString();
-         var categories = $scope.serverService.getCategoriesForImage(imageKey);
-         if(!categories){
-         image.categories = [{name: '-'},{name: '-'},{name: '-'},{name: '-'},{name: '-'}];
-         }
-         else{
-         image.categories = categories;
-         }
-         if(image.width < image.height){
-         //$scope.currentImageStyle = 'portrait';
-         image.css = 'background-image:url(\'http://localhost:62666/' + image.path + '\');' +
-         'background-repeat:no-repeat;' +
-         'background-position:center;' +
-         'background-size:contain;' +
-         'width:100%;' +
-         'height:100%;';
-         }
-         else{
-         //$scope.currentImageStyle = 'landscape';
-         image.css = 'background-image:url(\'http://localhost:62666/' + image.path + '\');' +
-         'background-repeat:no-repeat;' +
-         'background-position:center;' +
-         'background-size:cover;' +
-         'width:100%;' +
-         'height:100%;';
-         }
-         var caption = $scope.serverService.getCaptionForImage(image.name + '_' + image.modified);
-         if(caption){
-         image.caption = caption;
-         image.captionExists = true;
-         }
-         else{
-         image.caption = null;
-         image.captionExists = false;
-         }
-
-         }
-
-         console.log($('#mainWindow').height());
-         $scope.imagesOnLoad = true;
-         $scope.showDiaryVar = true;
-         $scope.showLoadingSpinner = false;
-
-         if($scope.currentImages.length > 0){
-         //TODO: sök på calling a function when ng-repeat has finished - fick den inte att funka bara. nedan är keff.
-         setTimeout(
-         function(){
-         console.log('Heighten 2:::::::');
-         console.log($('#mainWindow').height());
-         $('#myCarousel').carousel()},
-         3000);
-         }
+                    }
+                    $scope.$digest();
 
 
 
-         var url = 'http://content.guardianapis.com/search?section=news&from-date=' + $scope.currentDate + '&to-date=' + $scope.currentDate + '&order-by=relevance&format=json&api-key=t7dche4w86sjb3c6g6xh8dms';
-         $.ajax({
-         url: url,
-         dataType: 'jsonp',
-         success: function (data) {
-         // $('body').html(data);
-         // console.log(data);
-         var results = data.response.results;
-         for(var i = 0; i < results.length;i++){
-         //console.log(results[i].webTitle);
-         if(i < 5){
-         var item = $('<p style="text-indent:-13px;margin-bottom:20px;"><i class="icon-chevron-sign-right" style="margin-right: -5px;color:;color:#FF9999";"></i><span style="font-size:17px;line-height: 25px;color:white;font-weight: 400;text-indent:-1em;margin-left:1em;font-family: Garamond,serif">' + results[i].webTitle + '</span></a>');
-         $('#newsContainer').append(item);
+                });
+        }
 
-         }
-         }
-         }
-
-
-         });
-         var mainTextForToday =  'maintext_' + $scope.currentDate;
-         if($scope.dateData[mainTextForToday]){
-         console.log('mainTextForToday finns!');
-         $scope.mainText = {};
-         $scope.mainText.body = $scope.dateData[mainTextForToday].text;
-         $scope.mainText.clazz = $scope.dateData[mainTextForToday].clazz;
-         $scope.mainTextExists = true;
-         if($scope.dateData[mainTextForToday].header){
-         $scope.mainText.header = $scope.dateData[mainTextForToday].header;
-         $scope.mainTextHeaderExists = true;
-         }
-         console.log('HÄR: ' + $scope.mainText.body);
-
-         }
-         $scope.$digest();
-
-
-
-         });
-         }
-         */
     }
     $scope.saveMainText = function(event){
         console.log('saveMainText');

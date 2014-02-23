@@ -111,7 +111,7 @@
 
         },
         _getHead : function() {
-            console.log(this.options.startIn + ' härrr');
+
             var html = '<div class="fc-head">';
 
             for ( var i = 0; i <= 6; i++ ) {
@@ -157,7 +157,7 @@
                     var indexOfDatesHavingImages = this.angularScope.datesHavingImages.indexOf(isoDate);
                     if(indexOfDatesHavingImages >= 0){
                         imgFound = true;
-                        console.log('Hittade images för denna dag: ' + isoDate);
+
                     }
                     var maintextFound = false;
                     var factboxFound = false;
@@ -169,8 +169,7 @@
                         if(dateHavingText.factbox){
                            factboxFound = true;
                         }
-                        console.log('Hittade text för denna dag: ' + isoDate);
-                        console.log(dateHavingText);
+
                     }
                     var classy = '';
                     if(imgFound && maintextFound && factboxFound){
@@ -194,7 +193,7 @@
                     else if(imgFound && factboxFound){
                         classy = 'factboxImgBorder';
                     }
-                    console.log(isoDate);
+
                     var pos = this.startingDay - this.options.startIn,
                         p = pos < 0 ? 6 + pos + 1 : pos,
                         inner = '',

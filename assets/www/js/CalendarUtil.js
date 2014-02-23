@@ -8,9 +8,9 @@
 function CalendarUtil(){
 
 }
-CalendarUtil.prototype.initCalendar = function($scope, startDate){
+CalendarUtil.prototype.initCalendar = function(dateService, scope, navigate){
    // console.log(startDate);
-    var customDate = DateUtil.splitDateStringToCustomDate(startDate);
+    var customDate = DateUtil.splitDateStringToCustomDate(dateService.getCurrentDate());
    // console.log(customDate);
     var jsDate = DateUtil.getJSDateFromCustomDate(customDate);
   //  console.log(jsDate);
@@ -28,25 +28,21 @@ CalendarUtil.prototype.initCalendar = function($scope, startDate){
         $calendar = $( '#calendar' ),
         cal = $calendar.calendario( {
             onDayClick : function( $el, $contentEl, dateProperties ) {
-               // console.log(dateProperties);
-                $scope.diaryStyle = "3";//== 'Loading'
-                $scope.$digest();
-                var currentDateString = dateProperties.year + '-' + $scope.dateUtil.ISOformatDayOrMonth(dateProperties.month) +
-                    '-' + $scope.dateUtil.ISOformatDayOrMonth(dateProperties.day);
-                $scope.currentDate = currentDateString;
-                $scope.doInitJs = true;
-                $scope.diaryStyle = "1";//== 'Loading'
-                $scope.$digest();
-
-                if( $contentEl.length > 0 ) {
-                    showEvents( $contentEl, dateProperties );
-                }
+                //$scope.$digest();
+                var currentDateString = dateProperties.year + '-' + scope.dateUtil.ISOformatDayOrMonth(dateProperties.month) +
+                    '-' + scope.dateUtil.ISOformatDayOrMonth(dateProperties.day);
+                dateService.setCurrentDate(currentDateString);
+                dateService.setCurrentDateDMYY(dateProperties.day + '/' + dateProperties.month + '-' + ('' +dateProperties.year).substr(2, (dateProperties.year).length));
+                console.log('DateString: ' + currentDateString);
+                scope.$apply(function(){
+                    navigate.back();
+                });
 
             },
             caldata : codropsEvents,
             displayWeekAbbr : true ,
             today : jsDate,
-            angularScope: $scope
+            angularScope: scope
         } ),
         $month = $( '#custom-month' ).html( cal.getMonthName() ),
         $year = $( '#custom-year' ).html( cal.getYear() );

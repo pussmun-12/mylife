@@ -119,7 +119,7 @@ var app = angular.module('mylife', ['mylife.directive','mylife.directive2' ]).
         }]).
         factory('dateService', function(){
             return new DateService();
-        })
+        }).
         run(function($rootScope) {
 
             $rootScope.cloudMine = new cloudmine.WebService({

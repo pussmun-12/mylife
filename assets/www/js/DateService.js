@@ -7,12 +7,21 @@
  */
 function DateService(){
     this.dateString = '2014-01-01';
+    this.dateStringDMYY = '1/1-14';
 }
 
 DateService.prototype.setCurrentDate = function(date){
     this.dateString = date;
 }
 
+DateService.prototype.setCurrentDateDMYY = function(date){
+    this.dateStringDMYY = date;
+}
+
 DateService.prototype.getCurrentDate = function(){
     return this.dateString;
+}
+
+DateService.prototype.getCurrentDateDMYY = function(){
+    return this.dateStringDMYY;
 }
