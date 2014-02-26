@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html  >
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width" />
+
+    <link rel="stylesheet" type="text/css" href="css/index.css" />
+    <link rel="stylesheet" type="text/css" href="css/more.css" />
+    <link rel="stylesheet" type="text/css" href="css/calendar.css" />
+    <link rel="stylesheet" type="text/css" href="css/custom_2.css" />
+    <link rel="stylesheet" type="text/css" href="css/demo.css" />
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <link href="css/bootstrap-responsive.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="https://rawgithub.com/ajoslin/angular-mobile-nav/master/mobile-nav.css">
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+    <script src="js/jquery.calendario.js"></script>
+    <script type="text/javascript" src="js/data.js"></script>
+    <script src="js/modernizr.custom.63321.js"></script>
+    <script src="js/CalendarUtil.js"></script>
+    <script type="text/javascript" src="js/DateService.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.8/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.8/angular-resource.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.8/angular-route.js"></script>
+    <script src="https://rawgithub.com/ajoslin/angular-mobile-nav/master/mobile-nav.js"></script>
+    <script src="js/bootstrap.js"></script>
+    <script src="http://staticweb.cloudmine.me/cloudmine-0.9.10.min.js"></script>
+    <script src="js/ServerService.js"></script>
+    <script src="js/DateUtil.js"></script>
+    <script src="js/CalendarController.js"></script>
+    <script src="js/DiaryMainController.js"></script>
+    <script src="js/angular-spinner.js"></script>
+    <script type="text/javascript" src="js/index.js"></script>
+
+
+
+    <title>BLOCKET SCANNER</title>
+
+</head>
+<body style="overflow: hidden;" class="bgDark">
+<div id="container">
+
+
+</div>
+<script>
+    var url = "http://www.blocket.se/stockholm?q=&cg=1020&w=1&st=s&ps=0&pe=5&mys=2004&mye=2008&ms=&me=25&cxpf=&cxpt=&gb=&fu=&cxdw=&ca=11&is=1&l=0&md=th";
+
+    $.ajax({
+        url: url,
+        //dataType: 'jsonp',
+
+        success: function (data) {
+            //console.log(data);
+            var index = data.indexOf('<div class="app"');
+            //console.log('Index: ' + index);
+            var indexOfBodyEnd = data.indexOf('</body>');
+            console.log('Index: ' + indexOfBodyEnd);
+            console.log(data.length);
+            var strippedHTML = data.substring(index, indexOfBodyEnd);
+            console.log(strippedHTML);
+            $('#container').html(strippedHTML);
+            var items =  $('#container').find(".shadowtwo");
+            console.log($(items[0]).text());
+            items =   $('#container').find("input");
+            console.log(items);
+
+            var items = $(".hit_list").find(".item_link");
+            for(var i= 0; i<items.length;i++){
+                alert($(items[i]).find(".item_date"));
+                var itemDate =  $(items[i]).find(".item_date").html();
+                if(itemDate.indexOf("Idag") > -1)
+                //kolla om idag, om så jämför tiden med den som finns i localStorage, om nån finns. om ej finns eller om över alerta
+                if(!localStorage.getItem("blocketDate") || itemDate > localStorage.getItem("blocketDate")){
+                    navigator.notification.vibrate(15000);
+                    localStorage.setItem('blocketDate', itemDate);
+                    i = items.length;
+
+                }
+            }
+        }
+    });
+</script>
+</body>
+</html>
