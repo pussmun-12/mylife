@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 // Platform: android
 // 2.9.0-0-g83dc4bd
 /*
