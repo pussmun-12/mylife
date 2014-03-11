@@ -483,6 +483,7 @@ function DiaryMainController($scope, $log, $timeout, $rootScope, $location, $nav
     }
 
     $scope.toggleMenu = function(){
+        alert('toggelMeny');
         if($scope.showMenu){
             $scope.showMenu = false;
         }
